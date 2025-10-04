@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
+      - name: Verify gofmt
+        run: |
+          if [ -n "$(gofmt -l $(find . -name '*.go' -not -path './vendor/*'))" ]; then
+            echo 'Go files must be formatted with gofmt'
+            exit 1
+          fi
+
+      - name: Run tests with coverage
+        run: |
+          ./scripts/coverage.sh
+
+      - name: Install golangci-lint
+        run: |
+          go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+
+      - name: Run golangci-lint
+        env:
+          PATH: "$HOME/go/bin:${PATH}"
+        run: |
+          ./scripts/lint.sh
