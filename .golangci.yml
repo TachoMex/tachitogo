@@ -1,0 +1,22 @@
+run:
+  timeout: 3m
+  tests: true
+
+linters-settings:
+  gocyclo:
+    min-complexity: 12
+  revive:
+    confidence: 0.8
+
+linters:
+  enable:
+    - govet
+    - staticcheck
+    - revive
+    - gocyclo
+  disable-all: false
+
+issues:
+  exclude-use-default: false
+  exclude-dirs:
+    - vendor
